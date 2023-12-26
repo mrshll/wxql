@@ -1,0 +1,6 @@
+Query {
+  Exp = "show" VarExp
+
+  VarExp = "*" | ColExp
+  ColExp = "the"? alnum+ ("and" ColExp)?
+}
