@@ -13,8 +13,8 @@ Query {
   	| "over the next" digit+ TemporalUnit"s"? -- future
   TemporalUnit = "day" | "week" | "month" | "year"
 
-  PredicateFilter = "where" variable "was" PredicateOperator value
-  PredicateOperator = "above" | "below" | "equal" | "not equal"
+  PredicateFilter = "where" variable ("was" | "is" | "will be") PredicateOperator value
+  PredicateOperator = "above" | "greater than" | "below" | "less than" | "equal" | "not equal"
 
   SourceFilter = "from" any+
 

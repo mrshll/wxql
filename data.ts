@@ -1,10 +1,12 @@
-const data: {
+export type DataMeta = { name: string; type: string; unit?: string }[];
+export type Data = {
   [key: string]: {
-    meta: { name: string; type: string; unit?: string }[];
+    meta: DataMeta;
     dateLookup: { [key: string]: number };
     observations: (string | number)[][];
   };
-} = {
+};
+const data: Data = {
   "sensor-1234": {
     meta: [{ name: "timestamp", type: "datetime" }, {
       "name": "temperature",
