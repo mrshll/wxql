@@ -1,6 +1,21 @@
 Query {
-  Exp = "show" VarExp
+  Exp = "show" Variables Aggregator? TemporalFilter PredicateFilter? SourceFilter
 
-  VarExp = "*" | ColExp
-  ColExp = "the"? alnum+ ("and" ColExp)?
+  Variables = "*" | Variable
+  Variable = "the "? #(alnum+) ("and" Variable)?
+
+  Aggregator = "aggregated" ("daily" | "weekly" | "monthly" | "annualy")
+
+  TemporalFilter = "in the latest forecast""s"? -- latest
+  	| "in" "the"? ("last" | "past") digit+ TemporalUnit"s"? -- past
+  	| "over the next" digit+ TemporalUnit"s"? -- future
+  TemporalUnit = "day" | "week" | "month" | "year"
+
+  PredicateFilter = "where" Variable "was" PredicateOperator Value
+  PredicateOperator = "above" | "below" | "equal" | "not equal"
+
+  SourceFilter = "from" #(any+)
+
+  Value = digit+ Unit
+  Unit = #(letter+)
 }

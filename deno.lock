@@ -1,0 +1,8 @@
+{
+  "version": "3",
+  "remote": {
+    "https://cdn.skypack.dev/-/ohm-js@v17.1.0-3srSLQC0NW5SD3YRRuzn/dist=es2019,mode=imports/optimized/common/main-a4767563.js": "ed46d0835ef5e7054b6e45fd9ef9de4b63eb1568c92df5dbd162e020ae7c66d9",
+    "https://cdn.skypack.dev/-/ohm-js@v17.1.0-3srSLQC0NW5SD3YRRuzn/dist=es2019,mode=imports/optimized/ohm-js.js": "35f384a3b2598b957bf570458da1c670fc764ac453e8863eb6513b3e54a503e7",
+    "https://cdn.skypack.dev/ohm-js": "345f4557c6ffacdb3619ab1ed4005c77b86e7e53465b572b8a5bbc2495606f41"
+  }
+}
