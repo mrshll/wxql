@@ -1,8 +1,8 @@
 Query {
   Exp = "show" Variables Aggregator? TemporalFilter PredicateFilter? SourceFilter
 
-  Variables = "*" | Variable
-  Variable = "the "? #(alnum+) ("and" Variable)?
+  Variables = ("the"? Variable) ("and" Variables)?
+  Variable = #(alnum+)
 
   Aggregator = "aggregated" ("daily" | "weekly" | "monthly" | "annualy")
 
@@ -11,11 +11,11 @@ Query {
   	| "over the next" digit+ TemporalUnit"s"? -- future
   TemporalUnit = "day" | "week" | "month" | "year"
 
-  PredicateFilter = "where" Variable "was" PredicateOperator Value
+  PredicateFilter = "where" Variable "was" PredicateOperator value
   PredicateOperator = "above" | "below" | "equal" | "not equal"
 
   SourceFilter = "from" #(any+)
 
-  Value = digit+ Unit
-  Unit = #(letter+)
+  value = digit+ space unit
+  unit = (letter+)
 }
