@@ -24,11 +24,18 @@ S.addOperation("eval", {
     predicateFilter: Node,
     sourceFilter: Node,
   ) {
+    variables.eval();
+    return;
   },
-  Variables(variables: Node[]) {
-    variables.forEach((v) => {
-      console.log(v.sourceString);
+
+  Variables(vs: Node) {
+    vs.children.forEach((v) => {
+      v.eval();
     });
+  },
+
+  variable(v: Node) {
+    console.log(v.sourceString);
   },
 
   value(num: Node, _: Node, unit: Node) {
