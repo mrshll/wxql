@@ -1,10 +1,12 @@
 import * as ohm from "https://deno.land/x/ohm_js@v17.1.0/index.mjs";
 import { type Node } from "https://deno.land/x/ohm_js@v17.1.0/index.d.ts";
+import data from "./data.ts";
 
 type QueryResult = QueryResultSuccess | QueryResultFailed;
 
 type QueryResultSuccess = {
   status: "succeeded";
+  results: any[];
 };
 
 type QueryResultFailed = {
@@ -24,18 +26,61 @@ S.addOperation("eval", {
     predicateFilter: Node,
     sourceFilter: Node,
   ) {
-    variables.eval();
-    return;
+    const source = sourceFilter.eval() as string;
+
+    const availableSourceVariables = data[source].meta.map((m) => m.name);
+    const vars = variables.eval() as string[];
+    vars.forEach((v) => {
+      if (!availableSourceVariables.includes(v)) {
+        throw new Error(`Invalid variable ${v} for source`);
+      }
+    });
+    const varIndeces = vars.map((v) =>
+      data[source].meta.findIndex((m) => m.name == v)
+    );
+
+    const [startDate, endDate] = temporalFilter.eval() as [Date, Date];
+    let startIndex = 0, endIndex;
+    if (startDate) {
+      startIndex = data[source].dateLookup[startDate.toISOString()];
+    }
+
+    if (endDate) {
+      endIndex = data[source].dateLookup[endDate.toISOString()];
+    }
+
+    let results = [];
+    for (
+      let i = startIndex;
+      i < (endIndex || data[source].observations.length);
+      i++
+    ) {
+      results.push(varIndeces.map((vI) => data[source].observations[i][vI]));
+    }
+    return results;
   },
 
-  Variables(vs: Node) {
-    vs.children.forEach((v) => {
-      v.eval();
+  Variables_vars(vars: Node) {
+    return vars.asIteration().children.map((c) => {
+      return c.eval();
     });
   },
 
   variable(v: Node) {
-    console.log(v.sourceString);
+    return v.sourceString;
+  },
+
+  TemporalFilter_past_absolute(_: Node, date: Node) {
+    return [new Date(date.sourceString)];
+  },
+
+  SourceFilter(_: Node, s: Node): string {
+    const sStr = s.sourceString;
+    if (!Object.keys(data).includes(sStr)) {
+      throw new Error(`Invalid source ${sStr}`);
+    }
+
+    return sStr;
   },
 
   value(num: Node, _: Node, unit: Node) {
@@ -49,6 +94,5 @@ export default function query(queryString: string): QueryResult {
     return { status: "failed", reason: m.message };
   }
 
-  S(m).eval();
-  return { status: "succeeded" };
+  return { status: "succeeded", results: S(m).eval() };
 }

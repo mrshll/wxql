@@ -2,21 +2,27 @@ Query {
   Exp = "show" Variables Aggregator? TemporalFilter PredicateFilter? SourceFilter
 
   Variables = "*" -- all
-    | ("the"? variable) ("and" Variables)? -- vars
+    | ListOf<variable, "and"> -- vars
   variable = alnum+
 
   Aggregator = "aggregated" ("daily" | "weekly" | "monthly" | "annualy")
 
   TemporalFilter = "in the latest forecast""s"? -- latest
-  	| "in" "the"? ("last" | "past") digit+ TemporalUnit"s"? -- past
+  	| "in" "the"? ("last" | "past") digit+ TemporalUnit"s"? -- past_relative
+    | "since" Date -- past_absolute
   	| "over the next" digit+ TemporalUnit"s"? -- future
   TemporalUnit = "day" | "week" | "month" | "year"
 
   PredicateFilter = "where" variable "was" PredicateOperator value
   PredicateOperator = "above" | "below" | "equal" | "not equal"
 
-  SourceFilter = "from" #(any+)
+  SourceFilter = "from" any+
 
   value = digit+ space unit
   unit = (letter+)
+
+  Date = year "-" month "-" day
+  year = digit digit digit digit
+  month = digit digit
+  day = digit digit
 }
