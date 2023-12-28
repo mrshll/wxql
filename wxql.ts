@@ -163,3 +163,17 @@ export default function query(queryString: string): QueryResult {
 
   return { status: "succeeded", results: S(m).eval(D, null) };
 }
+
+function runRepl() {
+  while (true) {
+    const queryString = prompt("> ");
+    if (queryString) {
+      const resp = query(queryString);
+      if (resp.status == "succeeded") {
+        console.log(resp.results);
+      } else {
+        console.log(`Query failed: ${resp.reason}`);
+      }
+    }
+  }
+}
