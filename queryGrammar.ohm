@@ -2,7 +2,7 @@ Query {
   Exp = "show" Variables Aggregator? TemporalFilter PredicateFilter? SourceFilter
 
   Variables = "*" -- all
-    | ListOf<variable, "and"> -- vars
+    | ListOf<variable, ("and" | ",")> -- vars
   variable = alnum+
 
   Aggregator = "aggregated" ("daily" | "weekly" | "monthly" | "annualy")

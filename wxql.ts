@@ -1,5 +1,6 @@
-import * as ohm from "https://deno.land/x/ohm_js@v17.1.0/index.mjs";
-import { type Node } from "https://deno.land/x/ohm_js@v17.1.0/index.d.ts";
+import * as ohm from "https://unpkg.com/ohm-js@17/index.mjs";
+import { Node } from "https://unpkg.com/ohm-js@17/index.d.ts";
+import convert from "https://unpkg.com/convert";
 import D, { Data, DataMeta } from "./data.ts";
 import { lessThan } from "./filters.ts";
 import { greaterThan } from "./filters.ts";
@@ -126,7 +127,16 @@ S.addOperation("eval(data, source)", {
     let opFn = greaterThan;
     const variable = vNode.eval(args.data, args.source);
     const variableIndex = getVarIndex(variable, args.data[args.source].meta);
-    const predicateValue = predicateValueNode.eval(args.data, args.source);
+    const srcUnit = args.data[args.source].meta[variableIndex].unit;
+
+    let { value: predValue, unit: predUnit } = predicateValueNode.eval(
+      args.data,
+      args.source,
+    );
+    if (srcUnit != predUnit) {
+      predValue = convert(predValue, predUnit).to(srcUnit);
+      predUnit = srcUnit;
+    }
 
     if (op == "below" || op == "less than") {
       opFn = lessThan;
@@ -136,13 +146,12 @@ S.addOperation("eval(data, source)", {
       opFn = nEq;
     }
     return (row: (number)[]) => {
-      return opFn(row[variableIndex], predicateValue);
+      return opFn(row[variableIndex], predValue);
     };
   },
 
-  value(num: Node, _: Node, unit: Node) {
-    // TODO: convert using unit
-    return parseFloat(num.sourceString);
+  value(num: Node, _: Node, unit: Node): { value: number; unit: string } {
+    return { value: parseFloat(num.sourceString), unit: unit.sourceString };
   },
 });
 

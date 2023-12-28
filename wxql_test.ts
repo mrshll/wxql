@@ -6,6 +6,8 @@ import query from "./wxql.ts";
   "show temperature and precipitation since 2019-01-01 from sensor-1234",
   "show precipitation since 2022-01-01 from sensor-1234",
   "show timestamp and precipitation since 2019-01-01 where precipitation was greater than 0 mm from sensor-1234",
+  "show timestamp and temperature since 2019-01-01 where temperature was greater than 67 F from sensor-1234",
+  "show timestamp, temperature since 2019-01-01 where temperature was greater than 67 F from sensor-1234",
   // "show days in the last 5 years where temperature was below 0 F from sensor-1234",
   // "show precipitation and temperature aggregated daily in the latest forecasts from ecmwf-hres and noaa-gefs",
 ].forEach((q) => {
